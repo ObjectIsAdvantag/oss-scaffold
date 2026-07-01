@@ -26,6 +26,50 @@ function tryGh(args, opts) {
   }
 }
 
+// --- Preflight: verify gh can talk to the right host BEFORE any API call. ---
+// Multi-account setups (personal github.com + an enterprise host) are the common
+// failure mode: gh may be authenticated to the enterprise host only, or a stale
+// GITHUB_ENTERPRISE_TOKEN / GH_TOKEN env var may shadow a valid login. Detect
+// the host from the git remote and check that specific host so we fail early
+// with an actionable message instead of a confusing mid-run API error.
+function remoteHost() {
+  try {
+    const url = execFileSync('git', ['remote', 'get-url', 'origin'], {
+      encoding: 'utf8',
+    }).trim();
+    // SSH: git@host:owner/repo(.git)  |  git@host-alias:owner/repo
+    const ssh = url.match(/@([^:]+):/);
+    // HTTPS: https://host/owner/repo
+    const https = url.match(/^https?:\/\/([^/]+)\//);
+    let host = ssh ? ssh[1] : https ? https[1] : null;
+    if (!host) return null;
+    // Normalize SSH host aliases (e.g. github.com-work → github.com).
+    if (host.startsWith('github.com')) host = 'github.com';
+    return host;
+  } catch {
+    return null;
+  }
+}
+
+const host = remoteHost();
+if (host) {
+  const status = tryGh(['auth', 'status', '-h', host], { json: false });
+  if (!status.ok) {
+    console.error(`gh is not authenticated for "${host}".`);
+    console.error('The settings audit talks to the GitHub API and needs a valid');
+    console.error(`login for the repo's host. Fix one of:`);
+    console.error(`  • gh auth login -h ${host}`);
+    console.error(`  • gh auth switch -h ${host} -u <account>   (if already logged in)`);
+    if (process.env.GH_TOKEN || process.env.GITHUB_TOKEN || process.env.GITHUB_ENTERPRISE_TOKEN) {
+      console.error('  • a GH_TOKEN / GITHUB_TOKEN / GITHUB_ENTERPRISE_TOKEN env var is set —');
+      console.error('    unset it if it points at the wrong host or is expired.');
+    }
+    console.error('\nDetails:');
+    console.error(status.error);
+    process.exit(2);
+  }
+}
+
 // Resolve owner/repo from the gh context.
 const ctx = tryGh(['repo', 'view', '--json', 'nameWithOwner,defaultBranchRef']);
 if (!ctx.ok) {

@@ -54,12 +54,15 @@ CI-verified, which breaks the tag-on-merge-commit release contract.
 
 ## Consistency model
 
-- **Managed** files (workflows, dependabot, templates, release skill/agent) are
-  byte-identical across repos and enforced by the **Scaffold Drift Check** CI
-  job. Editing them locally fails CI.
-- **Templated** files (README, CONTRIBUTING, CHANGELOG) keep local content
-  between `<!-- scaffold:NAME:start -->` / `<!-- scaffold:NAME:end -->` markers;
-  the scaffold owns only the marked regions.
+- **Managed** files (CI + publish workflows, `dependabot.yml`, PR + issue bug/
+  feature templates) are byte-identical across repos and enforced by the
+  **Scaffold Drift Check** CI job. Editing them locally fails CI.
+- **Templated** files (README, CONTRIBUTING, CHANGELOG, the **release skill and
+  release-manager agent**, issue `config.yml`) keep local content between
+  `<!-- scaffold:NAME:start -->` / `<!-- scaffold:NAME:end -->` markers or via
+  `{{placeholder}}` values from `.scaffoldrc.json`; the scaffold owns only the
+  marked regions. This lets a repo add project-specific release steps (e.g.
+  schema bumps) after the synced core without an override.
 - **Overrides** in `.scaffoldrc.json` let a repo intentionally opt a managed file
   out (e.g. org-mandated governance under a different org).
 
@@ -67,3 +70,78 @@ CI-verified, which breaks the tag-on-merge-commit release contract.
 
 Run the `oss-scaffold` agent's `check` verb to see drift and whether the
 vendored skill is behind the upstream source; `update` re-vendors and re-applies.
+
+## Working across multiple GitHub accounts (git + gh)
+
+Maintaining repos under several owners (a personal `github.com` account, one or
+more orgs, and possibly an enterprise host) needs two **independent** things set
+up correctly. They are often confused:
+
+- **git transport (push/pull)** uses your **SSH keys** (or HTTPS credentials).
+- **the `gh` CLI / GitHub API** (used by the `settings` verb, PR creation, etc.)
+  uses **per-host OAuth tokens**, *not* your SSH keys.
+
+Getting one working does not imply the other. The `settings` verb runs a
+preflight `gh auth status -h <host>` and fails early if the API side isn't
+authenticated for the repo's host.
+
+### git: SSH host aliases + per-directory identity
+
+Give each account its own key and an SSH host alias in `~/.ssh/config`:
+
+```sshconfig
+Host github.com-personal
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/id_ed25519_personal
+  IdentitiesOnly yes
+
+Host github.com-work
+  HostName github.com
+  User git
+  IdentityFile ~/.ssh/id_ed25519_work
+  IdentitiesOnly yes
+```
+
+Clone (or set the remote) through the alias so the right key is used:
+
+```bash
+git remote set-url origin git@github.com-personal:owner/repo.git
+```
+
+Drive the commit identity (name/email) by directory with `includeIf` in
+`~/.gitconfig`, so every repo under a tree gets the right author automatically:
+
+```gitconfig
+[includeIf "gitdir:~/repos/github.com/personal/"]
+  path = ~/.gitconfig-personal
+[includeIf "gitdir:~/repos/github.com/work/"]
+  path = ~/.gitconfig-work
+```
+
+`settings.mjs` normalizes SSH aliases (`github.com-work` → `github.com`) when it
+detects the host, so aliased remotes are handled.
+
+### gh: per-host login + account switching
+
+Authenticate `gh` once per host, then switch the active account per repo:
+
+```bash
+gh auth login -h github.com                 # add the account(s)
+gh auth switch -h github.com -u <account>    # select the active one
+gh auth status                              # verify
+```
+
+For a hands-off per-repo token, export `GH_TOKEN` scoped to a directory with
+[direnv](https://direnv.net/) (`.envrc` → `export GH_TOKEN=…`). This is the
+recommended setup for machines that juggle several accounts because it removes
+the manual `gh auth switch`.
+
+### Caveats
+
+- A `GITHUB_ENTERPRISE_TOKEN`, `GH_TOKEN`, or `GITHUB_TOKEN` in the environment
+  **overrides** interactive `gh` logins. A stale or wrong-host value silently
+  shadows a good login — unset it if the `settings` preflight complains.
+- `gh` picks the host from the repo's `origin` remote; an aliased SSH remote
+  still resolves to the real host, but the matching `gh` login must exist.
+- SSH working for `git push` tells you nothing about `gh`; check both.
