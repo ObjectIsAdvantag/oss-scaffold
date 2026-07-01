@@ -41,10 +41,36 @@ the "why"; this file is the operational "how".
 
 ## Verbs
 
+### Bootstrap — get the skill into a repo (prerequisite for `init`)
+
+The scripts run from `.github/skills/oss-scaffold/`, so that directory must exist
+in the target repo before any verb. Vendor it from the source repo at a tag
+(pick the version you want to pin):
+
+```bash
+# Copies just the skill directory at tag v0.2.0 into place (no git history).
+npx degit ObjectIsAdvantag/oss-scaffold/skill/oss-scaffold#v0.2.0 \
+  .github/skills/oss-scaffold
+```
+
+Alternatives if `degit` isn't available: shallow-clone and copy the subdir, or
+copy from an existing repo that already vendors it:
+
+```bash
+git clone --depth 1 --branch v0.2.0 \
+  https://github.com/ObjectIsAdvantag/oss-scaffold /tmp/oss-scaffold
+cp -r /tmp/oss-scaffold/skill/oss-scaffold .github/skills/oss-scaffold
+```
+
+`update` re-runs this same vendoring step at a newer tag; `init` assumes it has
+already happened.
+
 ### init — scaffold a fresh repo
-1. Detect the language/registry and choose a profile (default `node-npm-lib` for
-   npm libraries).
-2. Ask the user for `npmAuth` (`oidc` preferred) and confirm the package name.
+1. Ensure the skill is vendored (see **Bootstrap** above); detect the
+   language/registry and choose a profile (default `node-npm-lib` for npm
+   libraries).
+2. Ask the user for `npmAuth` (`oidc` preferred) and confirm the package name,
+   `owner`, and `repoUrl`.
 3. Write `.scaffoldrc.json` (with `source: github:ObjectIsAdvantag/oss-scaffold`
    and this skill's `version`).
 4. Run `apply.mjs` to install managed + templated files and merge package
@@ -62,7 +88,8 @@ the "why"; this file is the operational "how".
 
 ### update — apply fixes / re-vendor
 - If the skill is stale, re-vendor `.github/skills/oss-scaffold/` from the source
-  at the desired tag and bump `version` in `.scaffoldrc.json`.
+  at the desired tag (same command as **Bootstrap**, with the newer tag) and
+  bump `version` in `.scaffoldrc.json`.
 - Run `apply.mjs` to restore managed files and refresh templated marker regions
   (local content outside markers is preserved).
 - Run `check.mjs`; commit signed-off and open a PR. Never push to `main`
