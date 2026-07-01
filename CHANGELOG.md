@@ -26,6 +26,9 @@ CI, and a `v*` tag on `main`.
 - "Working across multiple GitHub accounts (git + gh)" section in
   `OSS-PRACTICES.md` (SSH host aliases, `includeIf`, `gh auth switch`, direnv,
   and the `GH_TOKEN`/`GITHUB_ENTERPRISE_TOKEN` override caveat).
+- Bootstrap/vendoring instructions (`npx degit …#v0.2.0`) in the README and skill
+  `SKILL.md`, clarifying that oss-scaffold is vendored into repos rather than
+  used as a GitHub template repository.
 
 ### Changed
 

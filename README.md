@@ -30,6 +30,20 @@ Run the `oss-scaffold` agent against any repo:
 | `update` | Apply fixes / re-vendor a newer skill; open a PR. |
 | `settings` | Audit GitHub repo settings; propose `gh` fixes (apply on confirm). |
 
+### Bootstrap: vendor the skill into a repo
+
+The verbs run from `.github/skills/oss-scaffold/`, so that directory has to exist
+first. Vendor it from this repo at a tag (pin the version you want):
+
+```bash
+npx degit ObjectIsAdvantag/oss-scaffold/skill/oss-scaffold#v0.2.0 \
+  .github/skills/oss-scaffold
+```
+
+Then run the `oss-scaffold` agent's `init` verb. `update` re-runs this vendoring
+step at a newer tag. This is **not** a GitHub *template repository*: the skill is
+copied *into* existing repos rather than used to stamp out new ones.
+
 ## Layout
 
 ```
