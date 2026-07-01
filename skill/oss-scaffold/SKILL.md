@@ -17,15 +17,25 @@ the "why"; this file is the operational "how".
 
 ## Core model
 
-- **Managed files** (workflows, dependabot, PR/issue templates, release
-  skill/agent) are byte-identical across repos and enforced by the **Scaffold
-  Drift Check** CI job. Do not hand-edit them; edit upstream and re-vendor.
-- **Templated files** (README, CONTRIBUTING, CHANGELOG) keep local content
-  between `<!-- scaffold:NAME:start -->` / `<!-- scaffold:NAME:end -->` markers;
-  only the marked regions are owned by the scaffold.
+- **Managed files** (CI + publish workflows, dependabot, PR template, issue
+  bug/feature templates) are byte-identical across repos and enforced by the
+  **Scaffold Drift Check** CI job. Do not hand-edit them; edit upstream and
+  re-vendor.
+- **Templated files** (README, CONTRIBUTING, CHANGELOG, the release skill and
+  release-manager agent, issue `config.yml`) keep local content between
+  `<!-- scaffold:NAME:start -->` / `<!-- scaffold:NAME:end -->` markers, and may
+  contain `{{placeholder}}` tokens. Only the marked regions are owned by the
+  scaffold. The release skill/agent sync a core block (`scaffold:release-core`,
+  `scaffold:release-agent`) while a project-specific section outside the markers
+  is preserved — so repos add release steps (e.g. schema bumps) without an
+  override.
+- **Placeholders** in templated files are substituted by `apply.mjs` from
+  `.scaffoldrc.json`: `{{owner}}`, `{{repoUrl}}`, `{{packageName}}`,
+  `{{version}}`, `{{npmAuth}}`. Unresolved placeholders are reported and left
+  as-is (never emptied).
 - **`.scaffoldrc.json`** at the repo root records the `profile`, pinned scaffold
-  `version`, `source`, `npmAuth` (`token` | `oidc`), `packageName`, and any
-  `overrides` (managed files intentionally opted out).
+  `version`, `source`, `npmAuth` (`token` | `oidc`), `packageName`, `owner`,
+  `repoUrl`, and any `overrides` (managed files intentionally opted out).
 - **Profiles:** `node-npm-lib` (npm library), `node-cli` (adds bin/completions),
   `generic` (governance + settings only).
 
@@ -62,6 +72,10 @@ the "why"; this file is the operational "how".
 - `node .github/skills/oss-scaffold/scripts/settings.mjs` audits merge strategy
   (merge-commit-only), Dependabot alerts + security updates, secret scanning +
   push protection, default branch, and branch protection.
+- It first runs a **preflight**: it detects the repo host from the git remote
+  (normalizing SSH aliases) and checks `gh auth status -h <host>`, failing early
+  with actionable guidance when the GitHub API side isn't authenticated for that
+  host. See the multi-account section in `OSS-PRACTICES.md`.
 - It prints the exact `gh` commands for auto-fixable gaps and a manual checklist
   for admin/UI-only items. Prefer GitHub MCP tools if available.
 - Apply auto-fixes **only after explicit user confirmation** (`--apply`). These

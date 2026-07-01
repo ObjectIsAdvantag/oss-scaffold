@@ -39,6 +39,25 @@ function write(destRel, content) {
   return true;
 }
 
+// Substitute {{placeholder}} tokens in templated content from .scaffoldrc.json.
+// Unknown or empty values are left as-is (and reported) so nothing silently
+// renders to an empty string.
+const unresolved = new Set();
+function render(text, cfg) {
+  const map = {
+    owner: cfg.owner ?? '',
+    repoUrl: cfg.repoUrl ?? '',
+    packageName: cfg.packageName ?? '',
+    version: cfg.version ?? '',
+    npmAuth: cfg.npmAuth ?? '',
+  };
+  return text.replace(/\{\{(\w+)\}\}/g, (m, k) => {
+    if (k in map && map[k] !== '') return map[k];
+    unresolved.add(k);
+    return m;
+  });
+}
+
 // Replace each <!-- scaffold:NAME:start -->...<!-- scaffold:NAME:end --> block
 // in `target` with the matching block from `source`.
 function mergeMarkers(source, target) {
@@ -68,9 +87,10 @@ for (const entry of managed) {
 }
 
 // 2. Templated files — whole-file if missing, else merge marker regions.
+//    Placeholders are rendered from .scaffoldrc.json before writing.
 for (const entry of templated) {
   if (cfg.overrides.includes(entry.dest)) continue;
-  const source = readFileSync(artifactPath(entry.src), 'utf8');
+  const source = render(readFileSync(artifactPath(entry.src), 'utf8'), cfg);
   const existing = read(join(REPO_ROOT, entry.dest));
   if (existing == null) {
     if (entry.optOut) continue; // don't create opt-out governance unless present
@@ -107,6 +127,13 @@ if (packageScripts) {
   }
 }
 
+if (unresolved.size) {
+  console.log(
+    `  note: unresolved placeholder(s) left as-is: ${[...unresolved]
+      .map((k) => `{{${k}}}`)
+      .join(', ')}. Add them to .scaffoldrc.json.`
+  );
+}
 console.log(`Applied oss-scaffold (skill ${read(join(SKILL_DIR, 'VERSION'))?.trim()})`);
 if (changes.length === 0) {
   console.log('Nothing to change — repo already matches. ✓');

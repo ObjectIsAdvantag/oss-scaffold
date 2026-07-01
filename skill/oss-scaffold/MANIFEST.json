@@ -28,20 +28,8 @@
           "src": "profiles/node-npm-lib/.github/dependabot.yml"
         },
         {
-          "dest": ".github/skills/release/SKILL.md",
-          "src": "profiles/node-npm-lib/.github/skills/release/SKILL.md"
-        },
-        {
-          "dest": ".github/agents/release-manager.agent.md",
-          "src": "profiles/node-npm-lib/.github/agents/release-manager.agent.md"
-        },
-        {
           "dest": ".github/PULL_REQUEST_TEMPLATE.md",
           "src": "shared/.github/PULL_REQUEST_TEMPLATE.md"
-        },
-        {
-          "dest": ".github/ISSUE_TEMPLATE/config.yml",
-          "src": "shared/.github/ISSUE_TEMPLATE/config.yml"
         },
         {
           "dest": ".github/ISSUE_TEMPLATE/bug_report.yml",
@@ -53,6 +41,18 @@
         }
       ],
       "templated": [
+        {
+          "dest": ".github/ISSUE_TEMPLATE/config.yml",
+          "src": "shared/.github/ISSUE_TEMPLATE/config.yml"
+        },
+        {
+          "dest": ".github/skills/release/SKILL.md",
+          "src": "profiles/node-npm-lib/.github/skills/release/SKILL.md"
+        },
+        {
+          "dest": ".github/agents/release-manager.agent.md",
+          "src": "profiles/node-npm-lib/.github/agents/release-manager.agent.md"
+        },
         {
           "dest": "CONTRIBUTING.md",
           "src": "shared/CONTRIBUTING.md",

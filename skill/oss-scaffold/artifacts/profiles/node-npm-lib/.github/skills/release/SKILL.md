@@ -4,10 +4,17 @@ description: 'Cut a new npm release of this package. Use when preparing, tagging
 argument-hint: 'Target version, e.g. 1.0.0 or 1.0.0-rc.6'
 ---
 
-<!-- Managed by oss-scaffold — edit upstream (github.com/ObjectIsAdvantag/oss-scaffold), not here. -->
+<!--
+  The block between the scaffold:release-core markers below is synced from
+  oss-scaffold (github.com/ObjectIsAdvantag/oss-scaffold) — edit it upstream.
+  Anything OUTSIDE the markers (front matter, and the "Project-specific release
+  steps" section at the bottom) is yours: add repo-specific steps there and they
+  survive `oss-scaffold update`.
+-->
 
 # Release Workflow
 
+<!-- scaffold:release-core:start -->
 Release this package safely: every release goes through a branch and PR, CI runs
 on the branch, a maintainer reviews, the PR is merged to `main` with a **merge
 commit**, and a `v*` tag on `main` triggers the automated npm publish.
@@ -54,7 +61,9 @@ commit**, and a `v*` tag on `main` triggers the automated npm publish.
    `## [X.Y.Z] - YYYY-MM-DD` section under the right headings (Added, Changed,
    Deprecated, Removed, Fixed, Security). Update the compare/anchor links. Leave
    an empty `[Unreleased]` section.
-3. Run the full pre-release gate and confirm it is green:
+3. Complete any **project-specific release steps** (see the section at the bottom
+   of this file).
+4. Run the full pre-release gate and confirm it is green:
    ```bash
    npm run prerelease
    ```
@@ -100,9 +109,21 @@ version and repeat the flow.
 
 - [ ] `package.json` version bumped to target
 - [ ] `CHANGELOG.md` updated (new section + links + empty Unreleased)
+- [ ] Project-specific release steps completed
 - [ ] `npm run prerelease` green
 - [ ] Branch `release/X.Y.Z` pushed, PR opened, commits DCO-signed
 - [ ] CI green on the PR + maintainer approval
 - [ ] PR merged with a merge commit
 - [ ] `vX.Y.Z` tag pushed to `main`
 - [ ] Publish workflow succeeded; correct dist-tag (`next` for RC, `latest` for stable)
+<!-- scaffold:release-core:end -->
+
+## Project-specific release steps
+
+<!--
+  Add steps unique to this repo here (schema/version bumps, generated artifacts,
+  docs sites, downstream sync, etc.). This section is NOT overwritten by
+  oss-scaffold. If there are none, leave the note below.
+-->
+
+_No project-specific release steps. Follow the core workflow above._
