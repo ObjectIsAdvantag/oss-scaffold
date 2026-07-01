@@ -116,7 +116,7 @@ installs (§6). Agent = the hands; CI job = the ratchet.
 ```json
 {
   "source": "github:ObjectIsAdvantag/oss-scaffold",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "profile": "node-npm-lib",
   "npmAuth": "oidc",
   "overrides": [],

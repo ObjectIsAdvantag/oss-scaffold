@@ -1,0 +1,19 @@
+# Dependencies (should not exist here — scripts use Node built-ins only)
+node_modules/
+
+# Logs / debug
+*.log
+npm-debug.log*
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Local scratch / test output
+/tmp/
+*.tmp
+coverage/
