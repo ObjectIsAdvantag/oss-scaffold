@@ -32,15 +32,25 @@ Run the `oss-scaffold` agent against any repo:
 
 ### Bootstrap: vendor the skill into a repo
 
-The verbs run from `.github/skills/oss-scaffold/`, so that directory has to exist
-first. Vendor it from this repo at a tag (pin the version you want):
+**Prerequisite:** Node.js 18+ (for `npx`). If the target repo has no Node.js yet,
+use the git fallback below.
+
+Vendor the skill from this repo at a tag (pin the version you want):
 
 ```bash
 npx degit ObjectIsAdvantag/oss-scaffold/skill/oss-scaffold#v0.2.0 \
   .github/skills/oss-scaffold
 ```
 
-Then run the `oss-scaffold` agent's `init` verb. `update` re-runs this vendoring
+**No Node.js yet?** Use git instead:
+
+```bash
+git clone --depth 1 --branch v0.2.0 \
+  https://github.com/ObjectIsAdvantag/oss-scaffold /tmp/oss-scaffold
+cp -r /tmp/oss-scaffold/skill/oss-scaffold .github/skills/oss-scaffold
+```
+
+Then run the `oss-scaffold` agent's `init` verb. `update` re-runs the vendoring
 step at a newer tag. This is **not** a GitHub *template repository*: the skill is
 copied *into* existing repos rather than used to stamp out new ones.
 

@@ -44,8 +44,9 @@ the "why"; this file is the operational "how".
 ### Bootstrap — get the skill into a repo (prerequisite for `init`)
 
 The scripts run from `.github/skills/oss-scaffold/`, so that directory must exist
-in the target repo before any verb. Vendor it from the source repo at a tag
-(pick the version you want to pin):
+in the target repo before any verb.
+
+**Requires Node.js 18+** (for `npx`). Vendor from this repo at a tag:
 
 ```bash
 # Copies just the skill directory at tag v0.2.0 into place (no git history).
@@ -53,8 +54,7 @@ npx degit ObjectIsAdvantag/oss-scaffold/skill/oss-scaffold#v0.2.0 \
   .github/skills/oss-scaffold
 ```
 
-Alternatives if `degit` isn't available: shallow-clone and copy the subdir, or
-copy from an existing repo that already vendors it:
+**No Node.js yet on this machine?** Use the git fallback:
 
 ```bash
 git clone --depth 1 --branch v0.2.0 \
@@ -62,7 +62,7 @@ git clone --depth 1 --branch v0.2.0 \
 cp -r /tmp/oss-scaffold/skill/oss-scaffold .github/skills/oss-scaffold
 ```
 
-`update` re-runs this same vendoring step at a newer tag; `init` assumes it has
+`update` re-runs the same vendoring command at a newer tag; `init` assumes it has
 already happened.
 
 ### init — scaffold a fresh repo
