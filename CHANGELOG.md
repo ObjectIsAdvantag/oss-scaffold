@@ -13,6 +13,16 @@ workflow overridden).
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-07-02
+
+### Fixed
+
+- Add `oss-scaffold.agent.md` to the managed artifacts installed into target
+  repos (`.github/agents/oss-scaffold.agent.md`). The agent was present in the
+  source repo but missing from the MANIFEST, so target repos had the skill but
+  no agent mode to invoke it. Added to both `node-npm-lib` and `generic` profiles
+  (`node-cli` inherits it via `extends: node-npm-lib`).
+
 ## [0.2.0] - 2026-07-01
 
 ### Added
@@ -52,6 +62,7 @@ workflow overridden).
 - `check.mjs` (offline drift), `apply.mjs`, `staleness.mjs`, `settings.mjs`.
 - `MANIFEST.json` describing managed vs templated files per profile.
 
-[Unreleased]: https://github.com/ObjectIsAdvantag/oss-scaffold/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/ObjectIsAdvantag/oss-scaffold/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/ObjectIsAdvantag/oss-scaffold/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/ObjectIsAdvantag/oss-scaffold/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/ObjectIsAdvantag/oss-scaffold/releases/tag/v0.1.0
