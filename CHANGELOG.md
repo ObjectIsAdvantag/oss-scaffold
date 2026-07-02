@@ -4,8 +4,9 @@ All notable changes to `oss-scaffold` are documented here. The format is based
 on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/), and this project
 adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-`oss-scaffold` dogfoods its own methodology: releases go through a branch + PR,
-CI, and a `v*` tag on `main`.
+`oss-scaffold` follows its own branch + PR + tag release flow (without npm
+publish — the repo itself uses the `node-npm-lib` profile with the publish
+workflow overridden).
 
 > **Pre-1.0:** while on `0.x`, the methodology and file layout may change in
 > backward-incompatible ways between minor versions as it stabilizes.
