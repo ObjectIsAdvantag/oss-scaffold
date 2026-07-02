@@ -20,7 +20,7 @@ skill/oss-scaffold/     # the distributable skill (this is what gets vendored)
   scripts/              # check.mjs, apply.mjs, staleness.mjs, settings.mjs (Node built-ins only)
 agent/oss-scaffold.agent.md   # init / check / update / settings entry point
 VERSION                 # current scaffold version (SemVer)
-CHANGELOG.md            # Keep a Changelog; this repo dogfoods its own release flow
+CHANGELOG.md            # Keep a Changelog; follows the same branch + PR + tag release flow
 ```
 
 ## Core concepts (do not break these)
@@ -45,15 +45,15 @@ CHANGELOG.md            # Keep a Changelog; this repo dogfoods its own release f
 2. Keep it **generic** — no per-repo strings. If you need a per-repo value, make
    it templated instead and add markers.
 3. Validate scripts still parse: `node --check skill/oss-scaffold/scripts/*.mjs`.
-4. Dogfood (see below). Bump the version and add a CHANGELOG entry.
+4. Bump the version and add a CHANGELOG entry.
 
 ### Add or change a profile
 1. Edit `skill/oss-scaffold/MANIFEST.json` (`managed`, `templated`, `extends`,
    `packageScripts`).
 2. Add the referenced artifacts under `artifacts/…`.
-3. Dogfood against a temp repo for that profile.
+3. Test against a temp repo for that profile (see **Test harness** below).
 
-### Dogfood (always do this before releasing)
+### Test harness (always run before releasing)
 ```bash
 # Simulate a target repo, apply, and confirm zero drift.
 rm -rf /tmp/testrepo && mkdir -p /tmp/testrepo/.github/skills
@@ -64,9 +64,12 @@ node /tmp/testrepo/.github/skills/oss-scaffold/scripts/apply.mjs
 node /tmp/testrepo/.github/skills/oss-scaffold/scripts/check.mjs --ci   # must exit 0
 ```
 
-## Release process (this repo dogfoods it)
+## Release process
 
-Follow the same flow this scaffold ships:
+This repo follows the same branch + PR + tag flow the scaffold ships, but
+**without** npm publish (oss-scaffold is not published to npm; it is vendored
+via `degit`). The CI workflow runs on the PR branch; the `v*` tag on `main`
+is the release record, not a publish trigger.
 
 1. Branch `release/X.Y.Z`; bump **both** `VERSION` and
    `skill/oss-scaffold/VERSION` to the same value; roll `CHANGELOG.md`.
