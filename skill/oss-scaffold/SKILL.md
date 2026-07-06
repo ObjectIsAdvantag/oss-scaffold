@@ -49,15 +49,15 @@ in the target repo before any verb.
 **Requires Node.js 18+** (for `npx`). Vendor from this repo at a tag:
 
 ```bash
-# Copies just the skill directory at tag v0.2.0 into place (no git history).
-npx degit ObjectIsAdvantag/oss-scaffold/skill/oss-scaffold#v0.2.0 \
+# Copies just the skill directory at tag v0.2.2 into place (no git history).
+npx degit ObjectIsAdvantag/oss-scaffold/skill/oss-scaffold#v0.2.2 \
   .github/skills/oss-scaffold
 ```
 
 **No Node.js yet on this machine?** Use the git fallback:
 
 ```bash
-git clone --depth 1 --branch v0.2.0 \
+git clone --depth 1 --branch v0.2.2 \
   https://github.com/ObjectIsAdvantag/oss-scaffold /tmp/oss-scaffold
 cp -r /tmp/oss-scaffold/skill/oss-scaffold .github/skills/oss-scaffold
 ```

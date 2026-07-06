@@ -11,7 +11,32 @@ workflow overridden).
 > **Pre-1.0:** while on `0.x`, the methodology and file layout may change in
 > backward-incompatible ways between minor versions as it stabilizes.
 
+<!-- toc -->
+
+- [[Unreleased]](#unreleased)
+- [[0.2.2] - 2026-07-06](#022---2026-07-06)
+- [[0.2.1] - 2026-07-02](#021---2026-07-02)
+- [[0.2.0] - 2026-07-01](#020---2026-07-01)
+- [[0.1.0] - 2026-07-01](#010---2026-07-01)
+
+<!-- tocstop -->
+
 ## [Unreleased]
+
+## [0.2.2] - 2026-07-06
+
+### Added
+
+- README: new "What `init` does" section documenting the interview questions
+  (`profile`, `packageName`, `owner`, `repoUrl`, `npmAuth`), the files installed
+  per profile, and the managed-vs-templated distinction.
+
+### Changed
+
+- README bootstrap section now clarifies that the `OSS Scaffold` agent mode comes
+  from this source repo and that `init` installs it as a managed file
+  (`.github/agents/oss-scaffold.agent.md`) in the target repo, making it
+  self-contained for future runs.
 
 ## [0.2.1] - 2026-07-02
 
@@ -62,7 +87,8 @@ workflow overridden).
 - `check.mjs` (offline drift), `apply.mjs`, `staleness.mjs`, `settings.mjs`.
 - `MANIFEST.json` describing managed vs templated files per profile.
 
-[Unreleased]: https://github.com/ObjectIsAdvantag/oss-scaffold/compare/v0.2.1...HEAD
-[0.2.1]: https://github.com/ObjectIsAdvantag/oss-scaffold/compare/v0.2.0...v0.2.1
+[Unreleased]: https://github.com/ObjectIsAdvantag/oss-scaffold/compare/v0.2.2...HEAD
+[0.2.2]: https://github.com/ObjectIsAdvantag/oss-scaffold/compare/v0.2.1...v0.2.2
 [0.2.0]: https://github.com/ObjectIsAdvantag/oss-scaffold/compare/v0.1.0...v0.2.0
+[0.2.1]: https://github.com/ObjectIsAdvantag/oss-scaffold/compare/v0.2.0...v0.2.1
 [0.1.0]: https://github.com/ObjectIsAdvantag/oss-scaffold/releases/tag/v0.1.0

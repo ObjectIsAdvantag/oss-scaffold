@@ -48,7 +48,7 @@ CHANGELOG.md            # Keep a Changelog; follows the same branch + PR + tag r
 4. Bump the version and add a CHANGELOG entry.
 
 ### Add or change a profile
-1. Edit `skill/oss-scaffold/MANIFEST.json` (`managed`, `templated`, `extends`,
+1. Edit `skill/oss-scaffold/MANIFEST.json` (`managed`, `templated`, `extends`,`
    `packageScripts`).
 2. Add the referenced artifacts under `artifacts/…`.
 3. Test against a temp repo for that profile (see **Test harness** below).
